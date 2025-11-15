@@ -1,0 +1,14 @@
+{
+  "name": "learning-plan-app",
+  "version": "1.0.0",
+  "description": "6 Aylık Öğrenme Planı Web Uygulaması",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "axios": "^1.6.0"
+  }
+}
