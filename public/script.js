@@ -201,11 +201,7 @@ if (el('summarizeBtn')) {
 
             summaryResult.className = 'alert alert-success';
             summaryResult.innerHTML = `<strong>Detaylı Özet:</strong><div>${summary}</div>`;
-        } catch (error) {
-            console.error('Özet Hatası:', error);
-            summaryResult.className = 'alert alert-danger';
-            summaryResult.innerHTML = 'Özet alınırken hata oluştu. ' + (error.message ? error.message : '');
-        } finally {
+        } catch (error)  finally {
             if (loading) loading.style.display = 'none';
             summaryResult.style.display = 'block';
         }
