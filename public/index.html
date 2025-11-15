@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>6 Aylık Öğrenme Planı - Profesyonel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="hero">
+        <h1>6 Aylık Öğrenme Planı: TYT-AYT, İngilizce, Python</h1>
+        <p>Güncellendi: <span id="currentDate"></span> | Günlük su, şınav, esneme ve net takibi ile motivasyon dolu yolculuk!</p>
+    </div>
+
+    <div class="container">
+        <section class="mb-5" aria-labelledby="planHeading">
+            <h2 id="planHeading" class="text-center mb-4">Öğrenme Planı</h2>
+            <div class="plan-grid" id="planGrid"></div>
+        </section>
+
+        <section class="card p-4 mb-4" aria-labelledby="videoHeading">
+            <h2 id="videoHeading"><i class="fas fa-video"></i> Video Desteği</h2>
+            <input type="text" id="videoSearch" class="form-control" placeholder="Video ara (örn. TYT Matematik)" aria-label="Video arama">
+            <button id="searchBtn" class="btn btn-primary mt-2"><i class="fas fa-search"></i> Ara</button>
+            <div id="loadingVideo" class="loading"><i class="fas fa-spinner fa-spin"></i> Yükleniyor...</div>
+            <div id="videoResults" class="mt-3" aria-live="polite"></div>
+        </section>
+
+        <section class="card p-4 mb-4 video-summary" aria-labelledby="summaryHeading">
+            <h2 id="summaryHeading"><i class="fas fa-brain"></i> Video Özeti (Gemini 2.0 Flash + RAG)</h2>
+            <input type="url" id="videoUrl" class="form-control" placeholder="YouTube Video URL'si girin" aria-label="YouTube URL">
+            <button id="summarizeBtn" class="btn btn-success mt-2"><i class="fas fa-magic"></i> Detaylı Özet Al</button>
+            <div id="loadingSummary" class="loading"><i class="fas fa-spinner fa-spin"></i> Özet hazırlanıyor...</div>
+            <div id="summaryResult" class="alert alert-info alert-custom" style="display: none;" aria-live="assertive"></div>
+        </section>
+
+        <section class="card p-4 mb-4 motivation" aria-labelledby="motivationHeading">
+            <h2 id="motivationHeading"><i class="fas fa-fire"></i> Motivasyon</h2>
+            <button id="motivateBtn" class="btn btn-success"><i class="fas fa-lightbulb"></i> Günlük Motivasyon Al</button>
+            <div id="loadingMotivation" class="loading"><i class="fas fa-spinner fa-spin"></i> Motivasyon yükleniyor...</div>
+            <div id="motivationText" class="mt-3" aria-live="polite"></div>
+        </section>
+
+        <section class="card p-4 mb-4" aria-labelledby="trackHeading">
+            <h2 id="trackHeading"><i class="fas fa-chart-line"></i> Günlük Takip</h2>
+            <form id="dailyForm">
+                <div class="row">
+                    <div class="col-md-3">
+                        <label for="water"><i class="fas fa-tint"></i> Su (Litre):</label>
+                        <input type="number" id="water" class="form-control" min="0" step="0.5" aria-describedby="waterHelp">
+                        <small id="waterHelp" class="form-text text-muted">Günlük su tüketiminizi girin.</small>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="pushups"><i class="fas fa-dumbbell"></i> Şınav (Tekrar):</label>
+                        <input type="number" id="pushups" class="form-control" min="0" aria-describedby="pushupsHelp">
+                        <small id="pushupsHelp" class="form-text text-muted">Şınav sayısını girin.</small>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="stretch"><i class="fas fa-yoga"></i> Esneme (Dakika):</label>
+                        <input type="number" id="stretch" class="form-control" min="0" aria-describedby="stretchHelp">
+                        <small id="stretchHelp" class="form-text text-muted">Esneme süresini girin.</small>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="net"><i class="fas fa-brain"></i> Net Sayısı:</label>
+                        <input type="number" id="net" class="form-control" min="0" aria-describedby="netHelp">
+                        <small id="netHelp" class="form-text text-muted">Günlük net sayısını girin.</small>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-info mt-3"><i class="fas fa-save"></i> Kaydet</button>
+            </form>
+            <div id="trackDisplay" class="mt-3" aria-live="polite"></div>
+            <canvas id="progressChart" width="400" height="200" aria-label="İlerleme grafiği"></canvas>
+        </section>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
