@@ -15,26 +15,11 @@ function validateYouTubeUrl(url) {
     const regex = /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
     return regex.test(url);
 }
-function getCurrentWeek() {
-    const startDate = new Date('2024-01-01'); // Plan başlangıç tarihi (ayarlayın)
-    const today = new Date();
-    const diffTime = Math.abs(today - startDate);
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    const week = Math.ceil(diffDays / 7);
-    if (week <= 4) return '1-4';
-    if (week <= 8) return '5-8';
-    if (week <= 12) return '9-12';
-    if (week <= 16) return '13-16';
-    if (week <= 20) return '17-20';
-    return '21-24';
-}
 
-// Tarih ve Hafta Güncelleme
+// Tarih Güncelleme
 document.getElementById('currentDate').textContent = new Date().toLocaleDateString('tr-TR');
-const currentWeek = getCurrentWeek();
-document.getElementById('currentWeek').textContent = `Bugünkü Hafta: ${currentWeek} - Odaklan!`;
 
-// Öğrenme Planı Kartları (Günlük Yenileme ile)
+// Öğrenme Planı Kartları
 const plans = [
     { week: '1-4', tyt: 'Temel konular (Türkçe, Matematik, Fizik)', eng: 'A1: Temel kelimeler', py: 'Değişkenler, döngüler', routine: 'Su: 1L, Şınav: 10, Esneme: 10dk', icon: 'fas fa-seedling' },
     { week: '5-8', tyt: 'Derinlik (Fizik, Kimya)', eng: 'A2: Zamanlar', py: 'Listeler, projeler', routine: 'Su: 1.5L, Şınav: 15, Esneme: 12dk', icon: 'fas fa-tree' },
@@ -46,7 +31,7 @@ const plans = [
 const planGrid = document.getElementById('planGrid');
 plans.forEach(plan => {
     const card = document.createElement('div');
-    card.className = `card plan-card ${plan.week === currentWeek ? 'current' : ''}`;
+    card.className = 'card plan-card';
     card.innerHTML = `
         <i class="${plan.icon}" aria-hidden="true"></i>
         <h5>Hafta ${plan.week}</h5>
@@ -104,27 +89,21 @@ document.getElementById('summarizeBtn').addEventListener('click', async () => {
     const summaryResult = document.getElementById('summaryResult');
     const loading = document.getElementById('loadingSummary');
     summaryResult.style.display = 'none';
-    if (!videoUrl || !validateYouTubeUrl(videoUrl)) {
+    if (!validateYouTubeUrl(videoUrl)) {
         summaryResult.className = 'alert alert-warning alert-custom';
         summaryResult.innerHTML = 'Lütfen geçerli bir YouTube URL girin (örn. https://www.youtube.com/watch?v=VIDEO_ID).';
         summaryResult.style.display = 'block';
         return;
     }
     loading.style.display = 'block';
+    const videoId = videoUrl.split('v=')[1].split('&')[0];
     try {
-        const urlParts = videoUrl.split('v=');
-        if (urlParts.length < 2) throw new Error('Geçersiz URL formatı');
-        const videoId = urlParts[1].split('&')[0];
-        if (!videoId) throw new Error('Video ID bulunamadı');
-        console.log('Fetching video details for ID:', videoId);
         const response = await fetch(`/api/youtube/video?id=${videoId}`);
-        if (!response.ok) throw new Error(`Video Detay Hatası: ${response.status}`);
+        if (!response.ok) throw new Error('Video Detay Hatası');
         const videoData = await response.json();
-        if (!videoData.items || videoData.items.length === 0) throw new Error('Video bulunamadı');
         const title = videoData.items[0].snippet.title;
         const description = videoData.items[0].snippet.description;
         const chunks = description.split('. ').slice(0, 5);
-        console.log('Generating summary with Gemini...');
         const geminiResponse = await fetch('/api/gemini/generate', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -133,16 +112,15 @@ document.getElementById('summarizeBtn').addEventListener('click', async () => {
                 model: 'gemini-2.0-flash-exp'
             })
         });
-        if (!geminiResponse.ok) throw new Error(`Gemini Hatası: ${geminiResponse.status}`);
+        if (!geminiResponse.ok) throw new Error('Gemini Hatası');
         const geminiData = await geminiResponse.json();
-        if (!geminiData.candidates || geminiData.candidates.length === 0) throw new Error('Özet üretilemedi');
         const summary = geminiData.candidates[0].content.parts[0].text;
         summaryResult.className = 'alert alert-success alert-custom';
         summaryResult.innerHTML = `<strong>Detaylı Özet:</strong> ${summary}`;
     } catch (error) {
         console.error('Özet Hatası:', error);
         summaryResult.className = 'alert alert-danger alert-custom';
-        summaryResult.innerHTML = 'Özet alınırken hata oluştu. API anahtarınızı veya bağlantınızı kontrol edin. Detay: ' + error.message;
+        summaryResult.innerHTML = 'Özet alınırken hata oluştu. API anahtarınızı veya bağlantınızı kontrol edin.';
     } finally {
         loading.style.display = 'none';
         summaryResult.style.display = 'block';
